@@ -7,9 +7,11 @@
 void run_kernel
 (double *vec, double scalar, int num_elements);
 
-pybind11::array_t multiply_with_scalar(pybind11::array_t<double> vec, double scalar)
+pybind11::array_t<double> multiply_with_scalar(pybind11::array_t<double> vec, double scalar)
 {
     int size = 10;
+    pybind11::array_t<double> ret(size);
+
     double *gpu_ptr;
     cudaError_t error = cudaMalloc(&gpu_ptr, size * sizeof(double));
 
@@ -34,6 +36,7 @@ pybind11::array_t multiply_with_scalar(pybind11::array_t<double> vec, double sca
     run_kernel(gpu_ptr, scalar, size);
 
     error = cudaMemcpy(ptr, gpu_ptr, size * sizeof(double), cudaMemcpyDeviceToHost);
+
     if (error != cudaSuccess) {
         throw std::runtime_error(cudaGetErrorString(error));
     }
@@ -42,6 +45,9 @@ pybind11::array_t multiply_with_scalar(pybind11::array_t<double> vec, double sca
     if (error != cudaSuccess) {
         throw std::runtime_error(cudaGetErrorString(error));
     }
+
+    return 
+
 }
 
 PYBIND11_MODULE(cuda_pybind, m)

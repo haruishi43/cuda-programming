@@ -19,8 +19,7 @@ void run_kernel
     dim3 dimBlock(256, 1, 1);
     dim3 dimGrid(ceil((double)num_elements / dimBlock.x));
     
-    kernel<<<dimGrid, dimBlock>>>
-        (vec, scalar, num_elements);
+    kernel<<<dimGrid, dimBlock>>>(vec, scalar, num_elements);
 
     cudaError_t error = cudaGetLastError();
     if (error != cudaSuccess) {
