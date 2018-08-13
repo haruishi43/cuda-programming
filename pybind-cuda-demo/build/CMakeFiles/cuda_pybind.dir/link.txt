@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC  -std=c++11 -O3 -DNDEBUG  -shared  -o cuda_pybind.cpython-36m-x86_64-linux-gnu.so CMakeFiles/cuda_pybind.dir/main.cpp.o -flto libhello.so /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl -lrt -Wl,-rpath,/home/haruishi/dev/cuda-programming/pybind-cuda-demo/build 
