@@ -31,3 +31,17 @@ void run_kernel
         throw strstr.str();
     }
 }
+
+// unsigned char *d_red, *d_green, *d_blue;
+
+// void allocateMemoryAndCopyToGPU(
+//     const size_t num_rows,
+//     const size_t num_cols
+// )
+// {
+//     // allocate memory for the three different channels
+//     checkCudaErrors(cudaMalloc(&d_red, sizeof(unsigned char)*num_rows*num_cols))
+//     checkCudaErrors(cudaMalloc(&d_green, sizeof(unsigned char)*num_rows*num_cols))
+//     checkCudaErrors(cudaMalloc(&d_blue, sizeof(unsigned char)*num_rows*num_cols))
+    
+// }

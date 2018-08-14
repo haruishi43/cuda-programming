@@ -1,0 +1,6 @@
+/home/haruishi/dev/cuda-programming/fooling-around/build/CMakeFiles/rebuild_cache.dir
+/home/haruishi/dev/cuda-programming/fooling-around/build/CMakeFiles/edit_cache.dir
+/home/haruishi/dev/cuda-programming/fooling-around/build/CMakeFiles/extension.dir
+/home/haruishi/dev/cuda-programming/fooling-around/build/CMakeFiles/hello.dir
+/home/haruishi/dev/cuda-programming/fooling-around/build/pybind11/CMakeFiles/edit_cache.dir
+/home/haruishi/dev/cuda-programming/fooling-around/build/pybind11/CMakeFiles/rebuild_cache.dir
