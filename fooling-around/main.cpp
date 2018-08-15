@@ -20,11 +20,11 @@ using Eigen::Unaligned;
 
 const double DEGREE2RADIAN = M_PI / 180.0;
 
-cv::Mat convertPano2Perspective(
-    cv::Mat &im_pano,
-    cv::Mat_<double> &K,
-    cv::Mat_<double> &rotation,
-    cv::Size &img_size);
+void process_image(
+    const cv::Mat &pano,
+    cv::Mat &pers,
+    const cv::Mat_<double> &rot,
+    const cv::Mat_<double> &K);
 
 /*
  Create instrinsic parameter
@@ -68,43 +68,6 @@ cv::Mat_<double> angle2RotMat(array<double, 3> &rot_angle)
  from theta (rotation around y-axis) and 
  phi (rotation around x-axis)
  */
-void convertThetaPhiToPanoImgXY(
-	const cv::Size size,
-	const double &theta,
-	const double &phi,
-	double &x,
-	double &y)
-{
-    // z-axis = front direction in the panorama image
-	x = (theta + M_PI) * (size.width/(2.0*M_PI)) - .5;
-	y = (phi + M_PI/2) * (size.height/(M_PI)) - .5;
-}
-
-/*
- Binlinear Interpolation
- */
-void interpBilinear(
-	const cv::Mat &src,
-	const double &u,
-	const double &v,
-	cv::Vec3b &pixel)
-{
-	pixel[0] = src.at<cv::Vec3b>((int)v, (int)u)[0]*(1.0 - (v-(int)v))*(1.0 - (u-(int)u))
-		+ src.at<cv::Vec3b>((int)v+1, (int)u)[0]*((v-(int)v))*(1.0 - (u-(int)u))
-		+ src.at<cv::Vec3b>((int)v, (int)u+1)[0]*(1.0 - (v-(int)v))*((u-(int)u))
-		+ src.at<cv::Vec3b>((int)v+1, (int)u+1)[0]*((v-(int)v))*((u-(int)u));
-	pixel[1] = src.at<cv::Vec3b>((int)v, (int)u)[1]*(1.0 - (v-(int)v))*(1.0 - (u-(int)u))
-		+ src.at<cv::Vec3b>((int)v+1, (int)u)[1]*((v-(int)v))*(1.0 - (u-(int)u))
-		+ src.at<cv::Vec3b>((int)v, (int)u+1)[1]*(1.0 - (v-(int)v))*((u-(int)u))
-		+ src.at<cv::Vec3b>((int)v+1, (int)u+1)[1]*((v-(int)v))*((u-(int)u));
-	pixel[2] = src.at<cv::Vec3b>((int)v, (int)u)[2]*(1.0 - (v-(int)v))*(1.0 - (u-(int)u))
-		+ src.at<cv::Vec3b>((int)v+1, (int)u)[2]*((v-(int)v))*(1.0 - (u-(int)u))
-		+ src.at<cv::Vec3b>((int)v, (int)u+1)[2]*(1.0 - (v-(int)v))*((u-(int)u))
-		+ src.at<cv::Vec3b>((int)v+1, (int)u+1)[2]*((v-(int)v))*((u-(int)u));
-}
-
-
-
 cv::Mat get_image(
     array<Eigen::Matrix<unsigned char, Dynamic, Dynamic, RowMajor>, 3> &src,
     array<double, 3> &angles)
@@ -117,8 +80,6 @@ cv::Mat get_image(
         rgb[i] = channel;
     }
     cv::merge(rgb, 3, im_pano);
-    cv::cuda::GpuMat d_pano {im_pano.rows, im_pano.cols, CV_8UC3};
-    d_pano.upload(im_pano);
 
     // Get intrinsic parameter:
     const int height = 360; // (int)im_pano.rows/4;
@@ -131,10 +92,10 @@ cv::Mat get_image(
     //cout << "Rotation Matrix: " << rotation << endl;
 
     // Create perspective image
-    cv::Mat im_perspective {width, height, CV_8UC3);
-    convertPano2Perspective(im_pano, im_perspective, K, rotation, size_per);
+    cv::Mat im_perspective = cv::Mat::zeros(cv::Size(width, height), CV_8UC3);
+    process_image(im_pano, im_perspective, K, rotation);
     
-    return im_pano;
+    return im_perspective;
 }
 
 PYBIND11_MODULE(extension, m)
